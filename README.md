@@ -812,6 +812,10 @@ Notes:
 <details>
 <summary>Changelog</summary>
 
+`1.3.2`
+- Fixed Experience System to properly account for a 0 EXP situation. 
+- Re-introduced a Lower Level % of NPC Level Experience Forumla. 
+
 `1.2.4`
 - Arguments parse protection for customspawn command.
 - Fixed error with spawning horses using customspawn command.
