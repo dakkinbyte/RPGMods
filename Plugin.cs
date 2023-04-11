@@ -355,7 +355,7 @@ namespace RPGMods
             Helper.GetServerGameManager(out Helper.SGM);
             Helper.GetUserActivityGridSystem(out Helper.UAGS);
             ProximityLoop.UpdateCache();
-            PvPSystem.Interlocked.isSiegeOn = false;
+            PvPSystem.Interlocked.isSiegeOn = true;
 
             if (isInitialized) return;
 

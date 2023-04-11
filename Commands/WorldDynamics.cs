@@ -28,6 +28,8 @@ namespace RPGMods.Commands
             if (ctx.Args[0].ToLower().Equals("faction"))
             {
                 if (ctx.Args[1].ToLower().Equals("ignore"))
+                bool isAllowed = ctx.Event.User.IsAdmin || PermissionSystem.PermissionCheck(ctx.Event.User.PlatformId, "mastery_args");
+                if (!isAllowed) return;
                 {
                     if (ctx.Args.Length < 3)
                     {
@@ -56,7 +58,8 @@ namespace RPGMods.Commands
                         Output.MissingArguments(ctx);
                         return;
                     }
-
+                    bool isAllowed = ctx.Event.User.IsAdmin || PermissionSystem.PermissionCheck(ctx.Event.User.PlatformId, "mastery_args");
+                    if (!isAllowed) return;
                     string mobName = ctx.Args[2];
                     if (Database.database_units.TryGetValue(mobName, out var mobGUID))
                     {
@@ -86,18 +89,28 @@ namespace RPGMods.Commands
                 }
                 if (ctx.Args[1].ToLower().Equals("save"))
                 {
-                    WorldDynamicsSystem.SaveFactionStats();
-                    WorldDynamicsSystem.SaveIgnoredMobs();
-                    Output.SendSystemMessage(ctx, $"Factions data & ignored mobs saved.");
-                    return;
+                    bool isAllowed = ctx.Event.User.IsAdmin || PermissionSystem.PermissionCheck(ctx.Event.User.PlatformId, "mastery_args");
+                    if (!isAllowed) return;
+                    else
+                    {
+                        WorldDynamicsSystem.SaveFactionStats();
+                        WorldDynamicsSystem.SaveIgnoredMobs();
+                        Output.SendSystemMessage(ctx, $"Factions data & ignored mobs saved.");
+                        return;
+                    }
                 }
                 if (ctx.Args[1].ToLower().Equals("load"))
                 {
-                    WorldDynamicsSystem.LoadFactionStats();
-                    WorldDynamicsSystem.LoadIgnoredMobs();
-                    Output.SendSystemMessage(ctx, $"Factions & ignored mobs json data loaded.");
-                    return;
-                }
+                    bool isAllowed = ctx.Event.User.IsAdmin || PermissionSystem.PermissionCheck(ctx.Event.User.PlatformId, "mastery_args");
+                    if (!isAllowed) return;
+                    else
+                    {
+                        WorldDynamicsSystem.LoadFactionStats();
+                        WorldDynamicsSystem.LoadIgnoredMobs();
+                        Output.SendSystemMessage(ctx, $"Factions & ignored mobs json data loaded.");
+                        return;
+                    }
+                }   
             }
         }
     }
