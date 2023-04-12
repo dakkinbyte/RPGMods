@@ -74,6 +74,7 @@ namespace RPGMods
         private static ConfigEntry<int> MaxHonorGainPerSpan;
         private static ConfigEntry<bool> EnableHonorBenefit;
         private static ConfigEntry<int> HonorSiegeDuration;
+        private static ConfigEntry<int> PvPDuration;
         private static ConfigEntry<bool> EnableHostileGlow;
         private static ConfigEntry<bool> UseProximityGlow;
 
@@ -211,6 +212,7 @@ namespace RPGMods
                 "All other bonus is also not applied.");
             HonorSiegeDuration = Config.Bind("PvP", "Custom Siege Duration", 180, "In minutes. Player will automatically exit siege mode after this many minutes has passed.\n" +
                 "Siege mode cannot be exited while duration has not passed.");
+            PvPDuration = Config.Bind("PvP", "Custom PVP Duration", 5, "In minutes, Player will be unable to exit PVP Mode until these many minutes has passed.\n");
             EnableHostileGlow = Config.Bind("PvP", "Enable Hostile Glow", true, "When set to true, hostile players will glow red.");
             UseProximityGlow = Config.Bind("PvP", "Enable Proximity Hostile Glow", true, "If enabled, hostile players will only glow when they are close to other online player.\n" +
                 "If disabled, hostile players will always glow red.");
@@ -401,6 +403,7 @@ namespace RPGMods
             PvPSystem.isHonorTitleEnabled = EnableHonorTitle.Value;
             PvPSystem.MaxHonorGainPerSpan = MaxHonorGainPerSpan.Value;
             PvPSystem.SiegeDuration = HonorSiegeDuration.Value;
+            PvPSystem.PvPDuration = PvPDuration.Value;
             PvPSystem.isHonorBenefitEnabled = EnableHonorBenefit.Value;
             PvPSystem.isEnableHostileGlow = EnableHostileGlow.Value;
             PvPSystem.isUseProximityGlow = UseProximityGlow.Value;

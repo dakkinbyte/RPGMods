@@ -42,6 +42,7 @@ namespace RPGMods.Utils
         public static Dictionary<ulong, PvPOffenseLog> OffenseLog = new();
         public static Dictionary<ulong, ReputationLog> ReputationLog = new();
         public static Dictionary<Entity, StateData> HostilityState = new();
+        public static Dictionary<ulong, PvpStateData> PvpState = new();
 
         //-- -- CustomNPC Spawner
         public static SizedDictionaryAsync<float, SpawnNPCListen> spawnNPC_Listen = new(500);
@@ -86,6 +87,8 @@ namespace RPGMods.Utils
         //-- -- -- NEW Database
         public static ConcurrentDictionary<ulong, PvPData> PvPStats { get; set; }
         public static Dictionary<ulong, SiegeData> SiegeState = new();
+        public static Dictionary<ulong, PvpStateData> PvpState = new();
+
         //-- -- -- OLD Database (To be removed)
         public static Dictionary<ulong, int> pvpkills { get; set; }
         public static Dictionary<ulong, int> pvpdeath { get; set; }

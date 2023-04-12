@@ -1,4 +1,5 @@
 ﻿using ProjectM;
+using ProjectM.Behaviours;
 using ProjectM.Network;
 using RPGMods.Utils;
 using System;
@@ -67,6 +68,7 @@ namespace RPGMods.Systems
         public static DateTime SiegeEnd = DateTime.Now;
         //-- -- Player Siege
         public static int SiegeDuration = 180;
+        public static int PvPDuration = 5;
 
         public static EntityManager em = Plugin.Server.EntityManager;
 
@@ -286,6 +288,13 @@ namespace RPGMods.Systems
             StateData stateData = new StateData(SteamID, true);
             Cache.HostilityState[playerEntity] = stateData;
             if (isEnableHostileGlow && !isUseProximityGlow) Helper.ApplyBuff(userEntity, playerEntity, PvPSystem.HostileBuff);
+            // Dakkins Additions Below 
+            Database.PvpState.TryGetValue(SteamID, out var pvpDBData);
+            Cache.SteamPlayerCache.TryGetValue(SteamID, out var playerData);
+            pvpDBData.IsPvpOn = true;
+            pvpDBData.PvpEndTime = DateTime.Now.AddMinutes(PvPSystem.PvPDuration);
+            pvpDBData.PvpStartTime = DateTime.Now;
+            Database.PvpState[SteamID] = pvpDBData;
             return true;
         }
 
@@ -294,6 +303,7 @@ namespace RPGMods.Systems
             StateData stateData = new StateData(SteamID, false);
             Cache.HostilityState[playerEntity] = stateData;
             Helper.RemoveBuff(playerEntity, PvPSystem.HostileBuff);
+            Database.PvpState[SteamID] = new PvpStateData(false, default, default);
             return true;
         }
 
@@ -303,7 +313,10 @@ namespace RPGMods.Systems
             {
                 if (Helper.GetAllies(playerEntity, out var playerGroup) > 0)
                 {
+                    //playerGroup.Allies.Add(playerEntity, userEntity);
                     playerGroup.Allies.Add(userEntity, playerEntity);
+                    /// We have a crash error here that is complaining if you siege off, that the system will state that an 
+                    /// item with the same key has already been added. 
                     if (forceSiege == false)
                     {
                         foreach (var ally in playerGroup.Allies)
@@ -335,6 +348,7 @@ namespace RPGMods.Systems
             PvPSystem.HostileON(SteamID, playerEntity, userEntity);
             Database.PvPStats.TryGetValue(SteamID, out var pvpStats);
             Database.SiegeState.TryGetValue(SteamID, out var siegeData);
+            var isPvPShieldON = false;
             if (pvpStats.Reputation > -20000 && forceSiege == false)
             {
                 if (siegeData.IsSiegeOn == false)
@@ -352,6 +366,11 @@ namespace RPGMods.Systems
                 TaskRunner.Start(taskWorld =>
                 {
                     PvPSystem.SiegeOFF(SteamID, playerEntity);
+                    return new object();
+                }, false, false, false, span);
+                TaskRunner.Start(taskWorld =>
+                {
+                    Helper.SetPvPShield(playerEntity, isPvPShieldON);
                     return new object();
                 }, false, false, false, span);
             }
@@ -385,7 +404,11 @@ namespace RPGMods.Systems
                     PvPSystem.HostileOFF(SteamID, playerEntity);
                 }
             }
+            Cache.SteamPlayerCache.TryGetValue(SteamID, out var playerData);
             Database.SiegeState[SteamID] = new SiegeData(false, default, default);
+            Database.PvpState[SteamID] = new PvpStateData(false, default, default);
+            ServerChatUtils.SendSystemMessageToAllClients(em, $"{Utils.Color.Red(playerData.CharacterName.ToString())} is exited {Color.Red("Siege Mode")}!");
+            Plugin.Logger.LogInfo($"Vampire {(playerData.CharacterName.ToString())} has exited Siege mode.");
             return true;
         }
 
@@ -778,6 +801,24 @@ namespace RPGMods.Systems
             {
                 Database.SiegeState = new Dictionary<ulong, SiegeData>();
                 Plugin.Logger.LogWarning("SiegeStates DB Created.");
+            }
+
+            //-- Pvp State Mechanic -- Dakkin 
+            if (!File.Exists("BepInEx/config/RPGMods/Saves/pvpstates.json"))
+            {
+                var stream = File.Create("BepInEx/config/RPGMods/Saves/pvpstates.json");
+                stream.Dispose();
+            }
+            content = File.ReadAllText("BepInEx/config/RPGMods/Saves/pvpstates.json");
+            try
+            {
+                Database.PvpState = JsonSerializer.Deserialize<Dictionary<ulong, PvpStateData>>(content);
+                Plugin.Logger.LogWarning("Pvpstates DB Populated.");
+            }
+            catch
+            {
+                Database.PvpState = new Dictionary<ulong, PvpStateData>();
+                Plugin.Logger.LogWarning("Pvpstates DB Created.");
             }
 
             //-- Transfer OLD Stats to new database.

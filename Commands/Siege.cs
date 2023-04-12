@@ -51,6 +51,8 @@ namespace RPGMods.Commands
                 return;
             }
 
+            var isPvPShieldON = false;
+
             if (ctx.Args.Length == 1 && ctx.Args[0].ToLower().Equals("on"))
             {
                 bool doConfirm = SiegeConfirm.TryGetValue(SteamID, out DateTime TimeStamp);
@@ -87,6 +89,7 @@ namespace RPGMods.Commands
                 {
                     PvPSystem.SiegeON(SteamID, charEntity, userEntity);
                     PvPSystem.HostileON(SteamID, charEntity, userEntity);
+                    Helper.SetPvPShield(charEntity, isPvPShieldON);
                     SiegeConfirm.Remove(SteamID);
                     Output.SendSystemMessage(ctx, "Siege & PVP mode engaged. Go Get Em!");
                     return;
@@ -94,6 +97,7 @@ namespace RPGMods.Commands
             }
             else if (ctx.Args.Length == 1 && ctx.Args[0].ToLower().Equals("off"))
             {
+                isPvPShieldON = true;
                 Helper.GetAllies(charEntity, out var allies);
                 if (allies.AllyCount > 0)
                 {
@@ -120,6 +124,7 @@ namespace RPGMods.Commands
                 if (TimeLeft.TotalSeconds <= 0)
                 {
                     PvPSystem.SiegeOFF(SteamID, charEntity);
+                    Helper.SetPvPShield(charEntity, isPvPShieldON);
                     Output.SendSystemMessage(ctx, "Defensive siege mode engaged.");
                     return;
                 }

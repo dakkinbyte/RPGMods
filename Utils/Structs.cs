@@ -88,6 +88,20 @@ namespace RPGMods.Utils
         }
     }
 
+    public struct PvpStateData
+    {
+        public bool IsPvpOn { get; set; }
+        public DateTime PvpEndTime { get; set; }
+        public DateTime PvpStartTime { get; set; }
+
+        public PvpStateData(bool isPvpOn = false, DateTime pvpEndTime = default, DateTime pvpStartTime = default)
+        {
+            IsPvpOn = isPvpOn;
+            PvpEndTime = pvpEndTime;
+            PvpStartTime = pvpStartTime;
+        }
+    }
+
     public struct StateData
     {
         public ulong SteamID { get; set; }

@@ -26,9 +26,11 @@ namespace RPGMods.Commands
                 if (PvPSystem.isHonorSystemEnabled)
                 {
                     Database.SiegeState.TryGetValue(SteamID, out var siegeState);
+                    Database.PvpState.TryGetValue(SteamID, out var pvpState);
                     Cache.HostilityState.TryGetValue(charEntity, out var hostilityState);
 
                     double tLeft = 0;
+                    double tRight = 0;
                     if (siegeState.IsSiegeOn)
                     {
                         TimeSpan TimeLeft = siegeState.SiegeEndTime - DateTime.Now;
@@ -37,6 +39,11 @@ namespace RPGMods.Commands
                         {
                             tLeft = -1;
                         }
+                    }
+                    if (pvpState.IsPvpOn)
+                    {
+                        TimeSpan TimeLeft = pvpState.PvpEndTime - DateTime.Now;
+                        tRight = Math.Round(TimeLeft.TotalHours);
                     }
 
                     string hostilityText = hostilityState.IsHostile ? "Aggresive" : "Passive";
@@ -62,6 +69,7 @@ namespace RPGMods.Commands
                     Output.SendSystemMessage(ctx, $"-- Time Left Until Refresh: {Color.White(TimeLeftUntilRefresh.ToString())} minute(s)");
                     Output.SendSystemMessage(ctx, $"-- Available Reputation Gain: {Color.White(HonorGainLeft.ToString())} point(s)");
                     Output.SendSystemMessage(ctx, $"Hostility: {Color.White(hostilityText)}");
+                    Output.SendSystemMessage(ctx, $"-- Time Left: {Color.White(tRight.ToString())} minutes(s)");
                     Output.SendSystemMessage(ctx, $"Siege: {Color.White(siegeText)}");
                     Output.SendSystemMessage(ctx, $"-- Time Left: {Color.White(tLeft.ToString())} hour(s)");
                 }
@@ -101,6 +109,7 @@ namespace RPGMods.Commands
 
                         Database.PvPStats.TryGetValue(SteamID, out var PvPStats);
                         Database.SiegeState.TryGetValue(SteamID, out var siegeState);
+                        Database.PvpState.TryGetValue(SteamID, out var pvpState);
 
                         if (ctx.Args[0].ToLower().Equals("on"))
                         {
@@ -117,15 +126,26 @@ namespace RPGMods.Commands
                                 return;
                             }
 
+                            TimeSpan TimeLeft = pvpState.PvpEndTime - DateTime.Now;
+
                             if (siegeState.IsSiegeOn)
                             {
                                 Output.CustomErrorMessage(ctx, $"You're in siege mode, aggressive state is enforced.");
                                 return;
                             }
-                            PvPSystem.HostileOFF(SteamID, charEntity);
-                            Helper.SetPvPShield(charEntity, isPvPShieldON);
-                            Output.SendSystemMessage(ctx, "Entering passive state!");
-                            return;
+                            if (TimeLeft.TotalSeconds <= 0)
+                            {
+                                PvPSystem.HostileOFF(SteamID, charEntity);
+                                Helper.SetPvPShield(charEntity, isPvPShieldON);
+                                Output.SendSystemMessage(ctx, "Entering passive state!");
+                                return;
+                            }
+                            else
+                            {
+                                double tLeft = Math.Round(TimeLeft.TotalHours, 2);
+                                Output.SendSystemMessage(ctx, $"PVP mode cannot be ended until {Color.White(tLeft.ToString())} more minute(s).");
+                                return;
+                            }
                         }
                     }
                     else

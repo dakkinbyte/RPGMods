@@ -18,10 +18,10 @@ namespace RPGMods.Hooks
             //-- Player Location Caching
             if (ExperienceSystem.isEXPActive || (PvPSystem.isHonorSystemEnabled && PvPSystem.isEnableHostileGlow && PvPSystem.isUseProximityGlow))
             // Trying to force on the Proximity Glow with just the EXP System. 
-            {
+/*            {
                 ProximityLoop.UpdateCache();
                 ProximityLoop.HostileProximityGlow();
-            }
+            }*/
             //-- HonorSystem Hostile Glow
             if (PvPSystem.isHonorSystemEnabled && PvPSystem.isEnableHostileGlow && PvPSystem.isUseProximityGlow) ProximityLoop.HostileProximityGlow();
 
