@@ -28,9 +28,9 @@ namespace RPGMods.Commands
             if (ctx.Args[0].ToLower().Equals("faction"))
             {
                 if (ctx.Args[1].ToLower().Equals("ignore"))
-                bool isAllowed = ctx.Event.User.IsAdmin || PermissionSystem.PermissionCheck(ctx.Event.User.PlatformId, "mastery_args");
-                if (!isAllowed) return;
                 {
+                    bool isAllowed = ctx.Event.User.IsAdmin || PermissionSystem.PermissionCheck(ctx.Event.User.PlatformId, "mastery_args");
+                    if (!isAllowed) return;
                     if (ctx.Args.Length < 3)
                     {
                         Output.MissingArguments(ctx);

@@ -274,7 +274,11 @@ namespace RPGMods.Systems
             }
 
             ServerChatUtils.SendSystemMessageToClient(em, victim_user, Utils.Color.Red($"You've been defeated by \"{killer_name}\""));
-            if (isAnnounceKills) ServerChatUtils.SendSystemMessageToAllClients(em, $"Vampire {Utils.Color.Red(killer_name)} has defeated {Utils.Color.Green(victim_name)}!");
+            if (isAnnounceKills)
+            {
+                ServerChatUtils.SendSystemMessageToAllClients(em, $"Vampire {Utils.Color.Red(killer_name)} has defeated {Utils.Color.Green(victim_name)}!");
+                Plugin.Logger.LogInfo($"Vampire {killer_name} has defeated {victim_name}!");
+            }
         }
 
         public static bool HostileON(ulong SteamID, Entity playerEntity, Entity userEntity)
@@ -337,6 +341,7 @@ namespace RPGMods.Systems
                 {
                     Cache.SteamPlayerCache.TryGetValue(SteamID, out var playerData);
                     ServerChatUtils.SendSystemMessageToAllClients(em, $"{Utils.Color.Red(playerData.CharacterName.ToString())} has entered {Color.Red("Active Siege")}!");
+                    Plugin.Logger.LogInfo($"Vampire {(playerData.CharacterName.ToString())} has entered Active Siege");
 
                     siegeData.IsSiegeOn = true;
                     siegeData.SiegeEndTime = DateTime.Now.AddMinutes(PvPSystem.SiegeDuration);
@@ -356,6 +361,7 @@ namespace RPGMods.Systems
                 {
                     Cache.SteamPlayerCache.TryGetValue(SteamID, out var playerData);
                     ServerChatUtils.SendSystemMessageToAllClients(em, $"{Utils.Color.Red(playerData.CharacterName.ToString())} has entered {Color.Red("Active Siege")}!");
+                    Plugin.Logger.LogInfo($"Vampire {(playerData.CharacterName.ToString())} has entered Active Siege");
                 }
                 siegeData.IsSiegeOn = true;
                 siegeData.SiegeEndTime = DateTime.MinValue;
@@ -399,7 +405,7 @@ namespace RPGMods.Systems
                 page -= 1;
             }
 
-            var recordsPerPage = 5;
+            var recordsPerPage = 10;
 
             var maxPage = (int)Math.Ceiling(Database.SiegeState.Count / (double)recordsPerPage);
             page = Math.Min(maxPage - 1, page);

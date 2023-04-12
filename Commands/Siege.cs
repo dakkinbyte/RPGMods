@@ -75,6 +75,7 @@ namespace RPGMods.Commands
                     }
 
                     Output.SendSystemMessage(ctx, "Are you sure you want to enter castle siege mode?");
+                    Output.SendSystemMessage(ctx, "This will automatically push you to PVP Agressive State as well.");
                     TimeSpan TimeLeft = DateTime.Now.AddMinutes(PvPSystem.SiegeDuration) - DateTime.Now;
                     double calcHours = Math.Round(TimeLeft.TotalHours, 2);
                     Output.SendSystemMessage(ctx, "You and your allies will not be able to exit siege mode for (" + calcHours + ") hours once you start.");
@@ -85,8 +86,9 @@ namespace RPGMods.Commands
                 else
                 {
                     PvPSystem.SiegeON(SteamID, charEntity, userEntity);
+                    PvPSystem.HostileON(SteamID, charEntity, userEntity);
                     SiegeConfirm.Remove(SteamID);
-                    Output.SendSystemMessage(ctx, "Active siege mode engaged.");
+                    Output.SendSystemMessage(ctx, "Siege & PVP mode engaged. Go Get Em!");
                     return;
                 }
             }

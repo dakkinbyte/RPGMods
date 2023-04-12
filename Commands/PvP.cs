@@ -105,6 +105,7 @@ namespace RPGMods.Commands
                         if (ctx.Args[0].ToLower().Equals("on"))
                         {
                             PvPSystem.HostileON(SteamID, charEntity, userEntity);
+                            Helper.SetPvPShield(charEntity, isPvPShieldON);
                             Output.SendSystemMessage(ctx, "Entering aggresive state!");
                             return;
                         }
@@ -122,6 +123,7 @@ namespace RPGMods.Commands
                                 return;
                             }
                             PvPSystem.HostileOFF(SteamID, charEntity);
+                            Helper.SetPvPShield(charEntity, isPvPShieldON);
                             Output.SendSystemMessage(ctx, "Entering passive state!");
                             return;
                         }
