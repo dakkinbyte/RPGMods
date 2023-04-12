@@ -313,8 +313,8 @@ namespace RPGMods.Systems
             {
                 if (Helper.GetAllies(playerEntity, out var playerGroup) > 0)
                 {
-                    //playerGroup.Allies.Add(playerEntity, userEntity);
-                    playerGroup.Allies.Add(userEntity, playerEntity);
+                    playerGroup.Allies.TryAdd(userEntity, playerEntity);
+                    /// Changing above to TryAdd instead. 
                     /// We have a crash error here that is complaining if you siege off, that the system will state that an 
                     /// item with the same key has already been added. 
                     if (forceSiege == false)
@@ -370,6 +370,7 @@ namespace RPGMods.Systems
                 }, false, false, false, span);
                 TaskRunner.Start(taskWorld =>
                 {
+                    isPvPShieldON = true;
                     Helper.SetPvPShield(playerEntity, isPvPShieldON);
                     return new object();
                 }, false, false, false, span);

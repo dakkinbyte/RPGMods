@@ -75,6 +75,14 @@ namespace RPGMods.Commands
                             return;
                         }
                     }
+                    if (Database.PvpState.TryGetValue(SteamID, out var pvpData))
+                    {
+                        if (pvpData.IsPvpOn)
+                        {
+                            Output.CustomErrorMessage(ctx, "You're already in active PVP mode.");
+                            return;
+                        }
+                    }
 
                     Output.SendSystemMessage(ctx, "Are you sure you want to enter castle siege mode?");
                     Output.SendSystemMessage(ctx, "This will automatically push you to PVP Agressive State as well.");
@@ -124,6 +132,7 @@ namespace RPGMods.Commands
                 if (TimeLeft.TotalSeconds <= 0)
                 {
                     PvPSystem.SiegeOFF(SteamID, charEntity);
+                    PvPSystem.HostileOFF(SteamID, charEntity);
                     Helper.SetPvPShield(charEntity, isPvPShieldON);
                     Output.SendSystemMessage(ctx, "Defensive siege mode engaged.");
                     return;

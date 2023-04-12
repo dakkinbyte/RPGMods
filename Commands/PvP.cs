@@ -142,8 +142,8 @@ namespace RPGMods.Commands
                             }
                             else
                             {
-                                double tLeft = Math.Round(TimeLeft.TotalHours, 2);
-                                Output.SendSystemMessage(ctx, $"PVP mode cannot be ended until {Color.White(tLeft.ToString())} more minute(s).");
+                                double tRight = Math.Round(TimeLeft.TotalHours, 2);
+                                Output.SendSystemMessage(ctx, $"PVP mode cannot be ended until {Color.White(tRight.ToString())} more minute(s).");
                                 return;
                             }
                         }
